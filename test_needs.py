@@ -40,3 +40,32 @@ class TestNeed(unittest.TestCase):
         assert (~self.need ^ self.need)()
         assert (self.need ^ ~self.need)()
         assert not (~self.need & ~self.need)()
+
+    def test_error_inheritance(self):
+        """Tests that the errors raised via combination needs are the same as
+            their first parent.
+        """
+        class AttributeNeed(Need):
+            error = AttributeError
+        attribute_need = AttributeNeed()
+
+        need = ~attribute_need & ~self.need
+        try:
+            with need:
+                raise ValueError
+        except Exception as e:
+            assert isinstance(e, AttributeError)
+
+        need = ~attribute_need | ~self.need
+        try:
+            with need:
+                raise ValueError
+        except Exception as e:
+            assert isinstance(e, AttributeError)
+
+        need = attribute_need ^ self.need
+        try:
+            with need:
+                raise ValueError
+        except Exception as e:
+            assert isinstance(e, AttributeError)
