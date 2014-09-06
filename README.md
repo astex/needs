@@ -122,7 +122,7 @@ normal_user_need = login_need & ~admin_need
 No Need
 -------
 
-There is a special need object included which is always met.  This is useful
+There is a special `Need` included which is always met.  This is useful
 as a default when some need must be used.  For example:
 
 ```python
