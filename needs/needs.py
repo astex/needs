@@ -100,34 +100,32 @@ class NegativeNeed(Need):
     """A need that returns the opposite of its parent need."""
     def __init__(self, parent_need):
         self.parent_need = parent_need
+        self.error = parent_need.error
 
     def is_met(self):
         return not self.parent_need()
 
-class AndNeed(Need):
-    """A need that returns the combination of two needs using and."""
+class CombinationNeed(Need):
+    """A base need for combining two needs."""
     def __init__(self, first_need, second_need):
         self.first_need = first_need
         self.second_need = second_need
 
+        # Take the error of the first need without checking the second.
+        self.error = first_need.error
+
+class AndNeed(CombinationNeed):
+    """A need that returns the combination of two needs using and."""
     def is_met(self):
         return self.first_need() and self.second_need()
 
-class OrNeed(Need):
+class OrNeed(CombinationNeed):
     """A need that returns the combination of two needs using or."""
-    def __init__(self, first_need, second_need):
-        self.first_need = first_need
-        self.second_need = second_need
-
     def is_met(self):
         return self.first_need() or self.second_need()
 
-class XorNeed(Need):
+class XorNeed(CombinationNeed):
     """A need that returns the combination of two needs using xor."""
-    def __init__(self, first_need, second_need):
-        self.first_need = first_need
-        self.second_need = second_need
-
     def is_met(self):
         return self.first_need() != self.second_need()
 
