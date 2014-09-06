@@ -1,7 +1,7 @@
 needs
 =====
 
-Context booleans, a pythonic way of expressing what your code needs.
+Context booleans.  A pythonic way of expressing what your code needs.
 
 
 Installation
@@ -21,8 +21,8 @@ a web context, you may have code that needs a logged-in user to run.  Using
 needs, you would simply run the code `with` a `login_need`.
 
 
-Usage
------
+Subclassing
+-----------
 
 The root of all needs is a subclass of `Need`:
 
@@ -41,24 +41,6 @@ class HasSerializeNeed(Need):
         return \
           hasattr(self.obj, 'serialize') and
           hasattr(self.obj.serialize, '__call__')
-```
-
-This can be instantiated whenever:
-
-```python
-some_obj = Serializer() # < I think that's a made up class...
-serializer_need = HasSerializerNeed(some_obj)
-```
-
-This can then be used in a variety of ways:
-
-```python
-if serializer_need():
-    # Do some code if the need is met.
-
-with serializer_need:
-    # Raise an attribute error if the need is not met.
-    # Otherwise, execute this code.
 ```
 
 
@@ -81,6 +63,40 @@ login_need = LoginNeed()
 
 In this way, a `Need` can be a handy wrapper for any function that returns a
 boolean.
+
+
+Instantiation
+-------------
+
+The singleton need above does not take arguments, but if the `Need`'s
+initializer does, then you can instantiate it however you like:
+
+```python
+some_obj = Serializer()
+serializer_need = HasSerializerNeed(some_obj)
+```
+
+
+Boolean
+-------
+
+Calling a need returns the results of `is_met`:
+
+```python
+logged_in = login_need()
+```
+
+
+Context
+-------
+
+This can then be used in a variety of ways:
+
+```python
+with login_need:
+    # Raise an Unauthorized error if the need is not met.
+    # Otherwise, execute this code.
+```
 
 
 Decorator
