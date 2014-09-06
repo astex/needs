@@ -80,7 +80,7 @@ Calling a need returns the results of `is_met`:
 Context
 -------
 
-This can then be used in a variety of ways:
+Any `Need` may also be used as a context, erroring out if the need is not met:
 
     with login_need:
         # Raise an Unauthorized error if the need is not met.
@@ -90,7 +90,8 @@ This can then be used in a variety of ways:
 Decorator
 ---------
 
-Any `Need` can be used as a decorator by feeding it as an argument to `@needs()`:
+Any `Need` can be used as a decorator by feeding it as an argument to
+`@needs()`, which will error out if the need is not met:
 
     @needs(login_need)
     def get_current_user():
@@ -131,4 +132,4 @@ when some need must be used.  For example:
         need = admin_need
 
     with need:
-        # Do some code if your need is met.
+        # Do some code.

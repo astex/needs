@@ -90,7 +90,7 @@ logged_in = login_need()
 Context
 -------
 
-This can then be used in a variety of ways:
+Any `Need` may also be used as a context, erroring out if the need is not met:
 
 ```python
 with login_need:
@@ -102,7 +102,8 @@ with login_need:
 Decorator
 ---------
 
-Any `Need` can be used as a decorator by feeding it as an argument to `@needs()`:
+Any `Need` can be used as a decorator by feeding it as an argument to
+`@needs()`, which will error out if the need is not met:
 
 ```python
 @needs(login_need)
