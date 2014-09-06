@@ -138,8 +138,8 @@ normal_user_need = login_need & ~admin_need
 No Need
 -------
 
-There is a special `Need` included which is always met.  This is useful
-as a default when some need must be used.  For example:
+There is a special `Need` which is always met.  This is useful as a default
+when some need must be used.  For example:
 
 ```python
 from needs import no_need
