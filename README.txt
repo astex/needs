@@ -7,9 +7,7 @@ Context booleans.  A pythonic way of expressing what your code needs.
 Installation
 ------------
 
-```
-$ pip install needs
-```
+    $ pip install needs
 
 
 Introduction
@@ -26,40 +24,36 @@ Subclassing
 
 The root of all needs is a subclass of `Need`:
 
-```python
-from needs import Need
+    from needs import Need
 
-class HasSerializeNeed(Need):
-    """A need to check if an object has a serialize method."""
-    error = AttributeError
+    class HasSerializeNeed(Need):
+        """A need to check if an object has a serialize method."""
+        error = AttributeError
 
-    def __init__(self, obj):
-        self.obj = obj
+        def __init__(self, obj):
+            self.obj = obj
 
-    def is_met(self):
-        """Checks that `self.obj` has a serialize callable."""
-        return \
-          hasattr(self.obj, 'serialize') and
-          hasattr(self.obj.serialize, '__call__')
-```
+        def is_met(self):
+            """Checks that `self.obj` has a serialize callable."""
+            return \
+              hasattr(self.obj, 'serialize') and
+              hasattr(self.obj.serialize, '__call__')
 
 
 Singletons
 ----------
 
-One of the simplest usage of a need is as a singleton that applies to your
+One of the simplest ways to use `Need`s is as a singleton that applies to your
 whole project.  For example, in a web framework, you may have a function that
 checks if a user is logged in.  You could then do:
 
-```python
-class LoginNeed(Need):
-    error = Unauthorized
+    class LoginNeed(Need):
+        error = Unauthorized
 
-    def is_met(self):
-        return is_user_logged_in()
+        def is_met(self):
+            return is_user_logged_in()
 
-login_need = LoginNeed()
-```
+    login_need = LoginNeed()
 
 In this way, a `Need` can be a handy wrapper for any function that returns a
 boolean.
@@ -71,10 +65,8 @@ Instantiation
 The singleton need above does not take arguments, but if the `Need`'s
 initializer does, then you can instantiate it however you like:
 
-```python
-some_obj = Serializer()
-serializer_need = HasSerializerNeed(some_obj)
-```
+    some_obj = Serializer()
+    serializer_need = HasSerializerNeed(some_obj)
 
 
 Boolean
@@ -82,9 +74,7 @@ Boolean
 
 Calling a need returns the results of `is_met`:
 
-```python
-logged_in = login_need()
-```
+    logged_in = login_need()
 
 
 Context
@@ -92,11 +82,9 @@ Context
 
 This can then be used in a variety of ways:
 
-```python
-with login_need:
-    # Raise an Unauthorized error if the need is not met.
-    # Otherwise, execute this code.
-```
+    with login_need:
+        # Raise an Unauthorized error if the need is not met.
+        # Otherwise, execute this code.
 
 
 Decorator
@@ -104,12 +92,10 @@ Decorator
 
 Any `Need` can be used as a decorator by feeding it as an argument to `@needs()`:
 
-```python
-@needs(login_need)
-def get_current_user():
-    # This will raise an Unauthorized error if login_need is not met.
-    # Otherwise, the code will be executed.
-```
+    @needs(login_need)
+    def get_current_user():
+        # This will raise an Unauthorized error if login_need is not met.
+        # Otherwise, the code will be executed.
 
 
 Operators
@@ -119,20 +105,14 @@ Operators
 Say that you have an `admin_need` that is met if the logged in user is an
 admin:
 
-```python
-# A need that is met if no user is logged in.
-no_login_need = ~login_need
-```
+    # A need that is met if no user is logged in.
+    no_login_need = ~login_need
 
-```python
-# A need that is met if no user is logged in or the user is admin.
-user_create_need = admin_need | no_login_need
-```
+    # A need that is met if no user is logged in or the user is admin.
+    user_create_need = admin_need | no_login_need
 
-```python
-# A need that is only met if the user is logged in and not admin.
-normal_user_need = login_need & ~admin_need
-```
+    # A need that is only met if the user is logged in and not admin.
+    normal_user_need = login_need & ~admin_need
 
 
 No Need
@@ -141,16 +121,14 @@ No Need
 There is a special `Need` which is always met.  This is useful as a default
 when some need must be used.  For example:
 
-```python
-from needs import no_need
+    from needs import no_need
 
-need = no_need
+    need = no_need
 
-if this_should_require_a_login:
-    need = login_need
-elif this_should_require_admin:
-    need = admin_need
+    if this_should_require_a_login:
+        need = login_need
+    elif this_should_require_admin:
+        need = admin_need
 
-with need:
-    # Do some code.
-```
+    with need:
+        # Do some code if your need is met.

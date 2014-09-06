@@ -47,7 +47,7 @@ class HasSerializeNeed(Need):
 Singletons
 ----------
 
-One of the simplest usage of a need is as a singleton that applies to your
+One of the simplest ways to use `Need`s is as a singleton that applies to your
 whole project.  For example, in a web framework, you may have a function that
 checks if a user is logged in.  You could then do:
 
