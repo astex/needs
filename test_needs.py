@@ -5,7 +5,7 @@ try:
 except ImportError:
     import unittest
 
-from needs import Need, no_need
+from needs import Need, no_need, needs
 
 
 __all__ = ['TestNeed']
@@ -46,7 +46,7 @@ class TestNeed(unittest.TestCase):
             their first parent.
         """
         class AttributeNeed(Need):
-            error = AttributeError
+            error = AttributeError()
         attribute_need = AttributeNeed()
 
         need = ~attribute_need & ~self.need
@@ -69,3 +69,14 @@ class TestNeed(unittest.TestCase):
                 raise ValueError
         except Exception as e:
             assert isinstance(e, AttributeError)
+
+    def test_decorator(self):
+        """Tests the @needs decorator."""
+        @needs(~no_need)
+        def should_not_execute():
+            raise ValueError()
+
+        try:
+            should_not_execute()
+        except Exception as e:
+            assert not isinstance(e, ValueError)
