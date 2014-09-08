@@ -26,18 +26,16 @@ The root of all needs is a subclass of `Need`:
 
     from needs import Need
 
-    class HasSerializeNeed(Need):
-        """A need to check if an object has a serialize method."""
-        error = AttributeError
+    class ObjectOwner(Need):
+        """A need to check if the current user owns an object."""
+        error = Unauthorized
 
         def __init__(self, obj):
             self.obj = obj
 
         def is_met(self):
-            """Checks that `self.obj` has a serialize callable."""
-            return \
-              hasattr(self.obj, 'serialize') and
-              hasattr(self.obj.serialize, '__call__')
+            """Checks that the current user owns `self.obj`."""
+            return self.obj.owner == get_current_user()
 
 
 Singletons
@@ -65,8 +63,8 @@ Instantiation
 The singleton need above does not take arguments, but if the `Need`'s
 initializer does, then you can instantiate it however you like:
 
-    some_obj = Serializer()
-    serializer_need = HasSerializerNeed(some_obj)
+    some_obj = SomeObjectClass()
+    owner_need = ObjectOwnerNeed(some_obj)
 
 
 Boolean
@@ -114,6 +112,9 @@ admin:
 
     # A need that is only met if the user is logged in and not admin.
     normal_user_need = login_need & ~admin_need
+
+    # A need that is met if the user is not logged in xor owns a given object.
+    weird_need = ~login_need ^ ObjectOwnerNeed(some_obj)
 
 
 No Need
