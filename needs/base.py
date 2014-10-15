@@ -15,7 +15,7 @@ class Need(object):
         you to do things like this:
 
             ```
-            if login_need():
+            if login_need:
                 # Do stuff that requires a login.
             else:
                 # Do other stuff that doesn't require a login.
@@ -67,10 +67,10 @@ class Need(object):
     error = Exception
 
     def __call__(self):
-        return self.is_met()
+        return bool(self)
 
     def __enter__(self):
-        if not self():
+        if not self:
             raise self.error
 
     def __exit__(self, type_, value, traceback):
@@ -88,6 +88,10 @@ class Need(object):
     def __xor__(self, other):
         return XorNeed(self, other)
 
+    def __bool__(self):
+        return self.is_met()
+    __nonzero__ = __bool__
+
     def is_met(self):
         """This should be overwritten for each need class.
 
@@ -103,7 +107,7 @@ class NegativeNeed(Need):
         self.error = parent_need.error
 
     def is_met(self):
-        return not self.parent_need()
+        return not bool(self.parent_need)
 
 class CombinationNeed(Need):
     """A base need for combining two needs."""
@@ -117,17 +121,17 @@ class CombinationNeed(Need):
 class AndNeed(CombinationNeed):
     """A need that returns the combination of two needs using and."""
     def is_met(self):
-        return self.first_need() and self.second_need()
+        return bool(self.first_need) and bool(self.second_need)
 
 class OrNeed(CombinationNeed):
     """A need that returns the combination of two needs using or."""
     def is_met(self):
-        return self.first_need() or self.second_need()
+        return bool(self.first_need) or bool(self.second_need)
 
 class XorNeed(CombinationNeed):
     """A need that returns the combination of two needs using xor."""
     def is_met(self):
-        return self.first_need() != self.second_need()
+        return bool(self.first_need) != bool(self.second_need)
 
 def needs(need):
     """A decorator to handle different needs.

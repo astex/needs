@@ -17,29 +17,29 @@ class TestNeed(unittest.TestCase):
         self.need = Need()
 
     def test_need(self):
-        assert self.need()
-        assert no_need()
+        assert self.need
+        assert no_need
 
     def test_invert_need(self):
-        assert not (~self.need)()
+        assert not ~self.need
 
     def test_or_need(self):
-        assert (self.need | self.need)()
-        assert (~self.need | self.need)()
-        assert (self.need | ~self.need)()
-        assert not (~self.need | ~self.need)()
+        assert self.need | self.need
+        assert ~self.need | self.need
+        assert self.need | ~self.need
+        assert not ~self.need | ~self.need
 
     def test_and_need(self):
-        assert (self.need & self.need)()
-        assert not (~self.need & self.need)()
-        assert not (self.need & ~self.need)()
-        assert not (~self.need & ~self.need)()
+        assert self.need & self.need
+        assert not ~self.need & self.need
+        assert not self.need & ~self.need
+        assert not ~self.need & ~self.need
 
     def test_xor_need(self):
-        assert not (self.need ^ self.need)()
-        assert (~self.need ^ self.need)()
-        assert (self.need ^ ~self.need)()
-        assert not (~self.need & ~self.need)()
+        assert not self.need ^ self.need
+        assert ~self.need ^ self.need
+        assert self.need ^ ~self.need
+        assert not ~self.need & ~self.need
 
     def test_error_inheritance(self):
         """Tests that the errors raised via combination needs are the same as

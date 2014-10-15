@@ -78,10 +78,11 @@ owner_need = ObjectOwnerNeed(some_obj)
 Boolean
 -------
 
-Calling a need returns the results of `is_met`:
+Needs may be used as a boolean as desired:
 
 ```python
-logged_in = login_need()
+if login_need:
+    # Do something that requires a login.
 ```
 
 
