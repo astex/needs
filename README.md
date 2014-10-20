@@ -101,14 +101,20 @@ with login_need:
 Decorator
 ---------
 
-Any `Need` can be used as a decorator by feeding it as an argument to
-`@needs()`, which will error out if the need is not met:
+Any `Need` can be used as a decorator either by feeding it as an argument to
+`@needs()` or using it directly:
 
 ```python
 @needs(login_need)
 def get_current_user():
     # This will raise an Unauthorized error if login_need is not met.
     # Otherwise, the code will be executed.
+```
+
+```python
+@login_need
+def get_current_user():
+    # ...
 ```
 
 
