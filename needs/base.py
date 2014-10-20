@@ -63,8 +63,23 @@ class Need(object):
             with admin_need & owner_need(some_obj):
                 # Do stuff that can only be done as an admin owner of some_obj.
             ```
+
+        Needs can also be used as a decorator:
+
+            ```
+            @login_need
+            def do_something():
+                # Do stuff that can't be done while not logged in.
+            ```
     """
     error = Exception
+
+    def __call__(self, f):
+        @wraps(f)
+        def decorated(*args, **kargs):
+            with self:
+                return f(*args, **kargs)
+        return decorated
 
     def __enter__(self):
         if not self:
@@ -94,12 +109,9 @@ class Need(object):
         return True
 
     # Aliases for is_met().
-    def __call__(self):
-        return self.is_met()
-
     def __bool__(self):
         return self.is_met()
-    __nonzero__ = is_met
+    __nonzero__ = __bool__
 
 class NegativeNeed(Need):
     """A need that returns the opposite of its parent need."""
@@ -132,21 +144,11 @@ Need.Combinator = CombinationNeed
 def needs(need):
     """A decorator to handle different needs.
 
-        This wraps a function in a Need context so that an error is raised if
-        the need is not met:
-
-            ```
-            @needs(login_need)
-            def a_route(*args, **kargs):
-                # Do some stuff that requires a login.
-            ```
+        needs(login_need)(f) == login_need(f)
     """
+    @wraps(need)
     def adapt(f):
-        @wraps(f)
-        def decorated(*args, **kargs):
-            with need:
-                return f(*args, **kargs)
-        return decorated
+        return need(f)
     return adapt
 
 no_need = Need()

@@ -71,6 +71,18 @@ class TestNeed(unittest.TestCase):
             assert isinstance(e, AttributeError)
 
     def test_decorator(self):
+        """Tests the need as a decorator."""
+        unmet_need = ~no_need
+        @unmet_need
+        def should_not_execute():
+            raise ValueError()
+
+        try:
+            should_not_execute()
+        except Exception as e:
+            assert not isinstance(e, ValueError)
+
+    def test_needs(self):
         """Tests the @needs decorator."""
         @needs(~no_need)
         def should_not_execute():
