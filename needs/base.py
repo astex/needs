@@ -146,7 +146,6 @@ def needs(need):
 
         needs(login_need)(f) == login_need(f)
     """
-    @wraps(need)
     def adapt(f):
         return need(f)
     return adapt
