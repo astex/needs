@@ -149,8 +149,6 @@ def needs(need):
 
         needs(login_need)(f) == login_need(f)
     """
-    def adapt(f):
-        return need(f)
-    return adapt
+    return need
 
 no_need = Need()
