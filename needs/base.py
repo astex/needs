@@ -113,7 +113,7 @@ class Need(object):
 
     # Aliases for is_met().
     def __bool__(self):
-        return self.is_met()
+        return bool(self.is_met())
     __nonzero__ = __bool__
 
 class NegativeNeed(Need):
