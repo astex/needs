@@ -74,6 +74,12 @@ some_obj = SomeObjectClass()
 owner_need = ObjectOwnerNeed(some_obj)
 ```
 
+By default, the `Need` initializer can take a boolean as an argument, for example:
+
+```python
+logged_in_need = Need(is_logged_in())
+```
+
 
 Boolean
 -------
