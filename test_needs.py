@@ -23,6 +23,10 @@ class TestNeed(unittest.TestCase):
     def test_invert_need(self):
         assert not ~self.need
 
+    def test_cast_need(self):
+        """Tests instantiating a need with a boolean."""
+        assert not Need(False)
+
     def test_or_need(self):
         assert self.need | self.need
         assert ~self.need | self.need
