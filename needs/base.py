@@ -74,6 +74,9 @@ class Need(object):
     """
     error = Exception
 
+    def __init__(self, bool_=True):
+        self.bool_ = bool_
+
     def __call__(self, f):
         @wraps(f)
         def decorated(*args, **kargs):
@@ -106,7 +109,7 @@ class Need(object):
             Returns:
                 (bool) - True if the need is met, False otherwise.
         """
-        return True
+        return self.bool_
 
     # Aliases for is_met().
     def __bool__(self):
