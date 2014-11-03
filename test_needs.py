@@ -12,7 +12,7 @@ __all__ = ['TestNeed']
 
 
 class TestNeed(unittest.TestCase):
-    """Tests peanuts.lib.auth.Need."""
+    """Tests Need."""
     def setUp(self):
         self.need = Need()
 
@@ -45,35 +45,6 @@ class TestNeed(unittest.TestCase):
         assert self.need ^ ~self.need
         assert not ~self.need & ~self.need
 
-    def test_error_inheritance(self):
-        """Tests that the errors raised via combination needs are the same as
-            their first parent.
-        """
-        class AttributeNeed(Need):
-            error = AttributeError()
-        attribute_need = AttributeNeed()
-
-        need = ~attribute_need & ~self.need
-        try:
-            with need:
-                raise ValueError
-        except Exception as e:
-            assert isinstance(e, AttributeError)
-
-        need = ~attribute_need | ~self.need
-        try:
-            with need:
-                raise ValueError
-        except Exception as e:
-            assert isinstance(e, AttributeError)
-
-        need = attribute_need ^ self.need
-        try:
-            with need:
-                raise ValueError
-        except Exception as e:
-            assert isinstance(e, AttributeError)
-
     def test_decorator(self):
         """Tests the need as a decorator."""
         unmet_need = ~no_need
@@ -96,3 +67,54 @@ class TestNeed(unittest.TestCase):
             should_not_execute()
         except Exception as e:
             assert not isinstance(e, ValueError)
+
+
+class TestNeedErrors(unittest.TestCase):
+    """Tests the error inheritence of Need."""
+    def setUp(self):
+        class Err(Exception):
+            pass
+        self.Err = Err
+
+        class UnMetNeed(Need):
+            error = Err()
+        self.unmet_need = UnMetNeed(False)
+
+    def test_and_errors(self):
+        try:
+            with no_need & self.unmet_need:
+                raise AssertionError
+        except self.Err as e:
+            assert e == self.unmet_need.error
+
+        try:
+            with self.unmet_need & no_need:
+                raise AssertionError
+        except self.Err as e:
+            assert e == self.unmet_need.error
+
+        try:
+            with self.unmet_need & ~no_need:
+                raise AssertionError
+        except self.Err as e:
+            assert e == self.unmet_need.error
+
+    def test_or_errors(self):
+        try:
+            with ~no_need | self.unmet_need:
+                raise AssertionError
+        except self.Err as e:
+            assert e == self.unmet_need.error
+
+    def test_xor_errors(self):
+        try:
+            with ~self.unmet_need ^ no_need:
+                raise AssertionError
+        except self.Err as e:
+            assert e == self.unmet_need.error
+
+        try:
+            with ~no_need ^ self.unmet_need:
+                raise AssertionError
+        except self.Err as e:
+            assert e == self.unmet_need.error

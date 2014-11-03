@@ -95,13 +95,13 @@ class Need(object):
         return self.Negator(self)
 
     def __and__(self, other):
-        return self.Combinator(self, other, lambda a, b: a and b)
+        return self.AndNeed(self, other)
 
     def __or__(self, other):
-        return self.Combinator(self, other, lambda a, b: a or b)
+        return self.OrNeed(self, other)
 
     def __xor__(self, other):
-        return self.Combinator(self, other, lambda a, b: a != b)
+        return self.XorNeed(self, other)
 
     def is_met(self):
         """This should be overwritten for each need class.
@@ -116,6 +116,7 @@ class Need(object):
         return bool(self.is_met())
     __nonzero__ = __bool__
 
+
 class NegativeNeed(Need):
     """A need that returns the opposite of its parent need."""
     @property
@@ -129,20 +130,61 @@ class NegativeNeed(Need):
         return not bool(self.parent_need)
 Need.Negator = NegativeNeed
 
-class CombinationNeed(Need):
-    """A base need for combining two needs."""
-    @property
-    def error(self):
-        return self.first_need.error
 
-    def __init__(self, first_need, second_need, comparator):
+class AndNeed(Need):
+    def __init__(self, first_need, second_need):
         self.first_need = first_need
         self.second_need = second_need
-        self.comparator = comparator
+
+    def __enter__(self):
+        if not self.first_need:
+            raise self.first_need.error
+        if not self.second_need:
+            raise self.second_need.error
 
     def is_met(self):
-        return self.comparator(bool(self.first_need), bool(self.second_need))
-Need.Combinator = CombinationNeed
+        return bool(self.first_need) and bool(self.second_need)
+Need.AndNeed = AndNeed
+
+
+class OrNeed(Need):
+    @property
+    def error(self):
+        """OrNeed will always raise the second error code since it only fails
+            if both conditions are not met.
+        """
+        return self.second_need.error
+
+    def __init__(self, first_need, second_need):
+        self.first_need = first_need
+        self.second_need = second_need
+
+    def is_met(self):
+        return bool(self.first_need) or bool(self.second_need)
+Need.OrNeed = OrNeed
+
+
+class XorNeed(Need):
+    def __init__(self, first_need, second_need):
+        self.first_need = first_need
+        self.second_need = second_need
+
+    def __enter__(self):
+        """Raises the second need's error if neither are met. Raises the first
+            need's error if both are met.
+        """
+        f = bool(self.first_need)
+        s = bool(self.second_need)
+
+        if not f and not s:
+            raise self.second_need.error
+        elif f and s:
+            raise self.first_need.error
+
+    def is_met(self):
+        return bool(self.first_need) != bool(self.second_need)
+Need.XorNeed = XorNeed
+
 
 def needs(need):
     """A decorator to handle different needs.
