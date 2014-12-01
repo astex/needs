@@ -137,10 +137,9 @@ class AndNeed(Need):
         self.second_need = second_need
 
     def __enter__(self):
-        if not self.first_need:
-            raise self.first_need.error
-        if not self.second_need:
-            raise self.second_need.error
+        with self.first_need:
+            with self.second_need:
+                pass
 
     def is_met(self):
         return bool(self.first_need) and bool(self.second_need)
@@ -177,9 +176,11 @@ class XorNeed(Need):
         s = bool(self.second_need)
 
         if not f and not s:
-            raise self.second_need.error
+            with self.second_need:
+                pass
         elif f and s:
-            raise self.first_need.error
+            with ~self.first_need:
+                pass
 
     def is_met(self):
         return bool(self.first_need) != bool(self.second_need)
