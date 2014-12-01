@@ -147,16 +147,17 @@ Need.AndNeed = AndNeed
 
 
 class OrNeed(Need):
-    @property
-    def error(self):
-        """OrNeed will always raise the second error code since it only fails
-            if both conditions are not met.
-        """
-        return self.second_need.error
-
     def __init__(self, first_need, second_need):
         self.first_need = first_need
         self.second_need = second_need
+
+    def __enter__(self):
+        try:
+            with self.first_need:
+                pass
+        except:
+            with self.second_need:
+                pass
 
     def is_met(self):
         return bool(self.first_need) or bool(self.second_need)
