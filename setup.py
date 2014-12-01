@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name="needs",
     packages=["needs"],
-    version="1.0.7",
+    version="1.0.8",
     description="Boolean Contexts",
     author="Phil Condreay",
     author_email="0astex@gmail.com",
@@ -12,7 +12,7 @@ setup(
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Other Environment",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
