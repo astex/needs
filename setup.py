@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name="needs",
     packages=["needs"],
-    version="1.0.8",
+    version="1.0.9",
     description="Boolean Contexts",
     author="Phil Condreay",
     author_email="0astex@gmail.com",
