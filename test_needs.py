@@ -118,3 +118,10 @@ class TestNeedErrors(unittest.TestCase):
                 raise AssertionError
         except self.Err as e:
             assert e == self.unmet_need.error
+
+    def test_combination_errors(self):
+        try:
+            with (self.unmet_need & no_need) & no_need:
+                raise AssertionError
+        except self.Err as e:
+            assert e == self.unmet_need.error
